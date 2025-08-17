@@ -4,6 +4,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, AIMessageChunk, ToolMessage
 from dotenv import load_dotenv
 from langchain_tavily import TavilySearch
+import os
+print("GEMINI_API_KEY:", os.getenv("GOOGLE_API_KEY"))
 
 
 # from langchain_community.tools.tavily_search import TavilySearchResults
