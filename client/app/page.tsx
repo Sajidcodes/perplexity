@@ -99,9 +99,7 @@ const Home = () => {
       ]);
 
       // SSE URL
-      let url = `https://perplexity-latest-9xq1.onrender.com/chat_stream/${encodeURIComponent(
-        userInput
-      )}`;
+      let url = `https://perplexity-latest-9xq1.onrender.com/chat_stream/${encodeURIComponent(userInput)}`;
       if (checkpointId) url += `?checkpoint_id=${encodeURIComponent(checkpointId)}`;
 
       const eventSource = new EventSource(url);

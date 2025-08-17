@@ -156,13 +156,14 @@ async def generate_chat_responses(message: str, checkpoint_id: Optional[str] = N
             
             chunk_content = serialise_ai_message_chunk(event["data"]["chunk"])
 
-            # Escape single quotes and newlines for safe JSON parsing
+            # Escape single quotes and newlines manually for safe JSON parsing
             # safe_content = chunk_content.replace("'", "\\'").replace("\n", "\\n")
             
             safe_content = json.dumps(chunk_content)
             #yielding this data/json to client
-            yield f"data: {{\"type\": \"content\", \"content\": \"{safe_content}\"}}\n\n" # sse protocol
-            
+            # yield f"data: {{\"type\": \"content\", \"content\": \"{safe_content}\"}}\n\n" # sse protocol
+            yield f"data: {json.dumps({'type': 'content', 'content': chunk_content})}\n\n"
+
             # content=empty on tool call
         elif event_type == "on_chat_model_end":
             # Check if there are tool calls for search
@@ -176,7 +177,9 @@ async def generate_chat_responses(message: str, checkpoint_id: Optional[str] = N
                 # safe_query = search_query.replace('"', '\\"').replace("'", "\\'").replace("\n", "\\n")
 
                 safe_query = json.dumps(search_query)
-                yield f"data: {{\"type\": \"search_start\", \"query\": \"{safe_query}\"}}\n\n"
+                # yield f"data: {{\"type\": \"search_start\", \"query\": \"{safe_query}\"}}\n\n"
+                yield f"data: {json.dumps({'type': 'search_start', 'query': search_query})}\n\n"
+
 
             # tool end will have all the info of tool                
         elif event_type == "on_tool_end" and event["name"] == "tavily_search_results_json":
@@ -193,7 +196,9 @@ async def generate_chat_responses(message: str, checkpoint_id: Optional[str] = N
                 
                 # Convert URLs to JSON and yield them
                 urls_json = json.dumps(urls)
-                yield f"data: {{\"type\": \"search_results\", \"urls\": {urls_json}}}\n\n"
+                # yield f"data: {{\"type\": \"search_results\", \"urls\": {urls_json}}}\n\n"
+                yield f"data: {json.dumps({'type': 'search_results', 'urls': urls})}\n\n"
+
     
     # Send an end event
     yield f"data: {{\"type\": \"end\"}}\n\n"
