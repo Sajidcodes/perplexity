@@ -1,3 +1,4 @@
+# made some updates to the version 
 # Core framework
 fastapi==0.115.12
 starlette==0.46.2
