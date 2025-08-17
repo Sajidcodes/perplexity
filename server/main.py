@@ -155,9 +155,11 @@ async def generate_chat_responses(message: str, checkpoint_id: Optional[str] = N
             # grabbing message chunk and passing inside method
             
             chunk_content = serialise_ai_message_chunk(event["data"]["chunk"])
+
             # Escape single quotes and newlines for safe JSON parsing
-            safe_content = chunk_content.replace("'", "\\'").replace("\n", "\\n")
+            # safe_content = chunk_content.replace("'", "\\'").replace("\n", "\\n")
             
+            safe_content = json.dumps(chunk_content)
             #yielding this data/json to client
             yield f"data: {{\"type\": \"content\", \"content\": \"{safe_content}\"}}\n\n" # sse protocol
             
@@ -171,7 +173,9 @@ async def generate_chat_responses(message: str, checkpoint_id: Optional[str] = N
                 # Signal that a search is starting
                 search_query = search_calls[0]["args"].get("query", "")
                 # Escape quotes and special characters
-                safe_query = search_query.replace('"', '\\"').replace("'", "\\'").replace("\n", "\\n")
+                # safe_query = search_query.replace('"', '\\"').replace("'", "\\'").replace("\n", "\\n")
+
+                safe_query = json.dumps(search_query)
                 yield f"data: {{\"type\": \"search_start\", \"query\": \"{safe_query}\"}}\n\n"
 
             # tool end will have all the info of tool                
