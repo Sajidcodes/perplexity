@@ -5,10 +5,11 @@ from langchain_core.messages import HumanMessage, AIMessageChunk, ToolMessage
 from dotenv import load_dotenv
 from langchain_tavily import TavilySearch
 import os
-print("GEMINI_API_KEY:", os.getenv("GOOGLE_API_KEY"))
+from openai import OpenAI
+from langchain_openai import ChatOpenAI
 
 
-# from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_community.tools.tavily_search import TavilySearchResults
 from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,7 +18,8 @@ from uuid import uuid4
 from langgraph.checkpoint.memory import MemorySaver
 
 load_dotenv()
-
+# print("GOOGLE_API_KEY:", os.getenv("GOOGLE_API_KEY"))
+# print("OPEN_API_KEY:", os.getenv("OPENAI_API_KEY"))
 # Initialize memory saver for checkpointing
 memory = MemorySaver()
 
@@ -30,8 +32,9 @@ search_tool = TavilySearch(
 
 tools = [search_tool]
 
-llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash-001') # initialize the class
+# llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash-001') # initialize the class
 # llm = ChatOpenAI(model="gpt-4o")
+llm = ChatOpenAI(model = "gpt-4.1-mini-2025-04-14")
 
 llm_with_tools = llm.bind_tools(tools=tools)
 
