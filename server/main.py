@@ -221,3 +221,9 @@ def read_root():
 # uvicorn app:app --reload ; 2nd app will reference app fast api variable/instance
 # reload = server restart automatically if we want to makeany changes``
 # /Applications/Python\ 3.9/Install\ Certificates.command 
+
+
+@app.get("/api/placeholder/{width}/{height}")
+def placeholder(width: int, height: int):
+    # Example: return a simple JSON or redirect to a placeholder image service
+    return {"url": f"https://via.placeholder.com/{width}x{height}"}
