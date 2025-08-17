@@ -1,6 +1,6 @@
 from typing import TypedDict, Annotated, Optional
 from langgraph.graph import add_messages, StateGraph, END
-from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, AIMessageChunk, ToolMessage
 from dotenv import load_dotenv
 from langchain_tavily import TavilySearch
@@ -26,6 +26,7 @@ memory = MemorySaver()
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
+
 search_tool = TavilySearch(
     max_results=4,
 )
@@ -34,7 +35,8 @@ tools = [search_tool]
 
 # llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash-001') # initialize the class
 # llm = ChatOpenAI(model="gpt-4o")
-llm = ChatOpenAI(model = "gpt-4.1-mini-2025-04-14")
+llm = ChatOpenAI(model = "gpt-4.1-mini")
+print(f"Using model: {llm.model_name}")  # Add this line to verify
 
 llm_with_tools = llm.bind_tools(tools=tools)
 
@@ -67,7 +69,8 @@ async def tool_node(state):
         tool_id = tool_call["id"]
         
         # Handle the search tool
-        if tool_name == "tavily_search_results_json":
+        if tool_name == "tavily_search_results":
+        # if tool_name == "tavily_search_results_json":
             # Execute the search tool with the provided arguments
             search_results = await search_tool.ainvoke(tool_args)
             
@@ -100,7 +103,7 @@ app = FastAPI() # initialized the fast api app
 # browser/client to comunicate w server endpoint
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["*"],  # too permissive for production
     allow_credentials=True,
     allow_methods=["*"],  
     allow_headers=["*"], 
